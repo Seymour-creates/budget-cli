@@ -11,44 +11,76 @@ import (
 func UpdateExpenses(newExpenses ...expenses.Expense) error {
 	existingExpenses, err := LoadExpenses()
 	if err != nil {
+		fmt.Println("Error loading existing expenses:", err)
 		return err
 	}
+
 	combinedExpense := append(existingExpenses, newExpenses...)
 	return SaveExpenses(combinedExpense)
+}
+
+func LoadExpenses() (expenses.Expenses, error) {
+	filePath, err := _getExpenseFilePath()
+	if err != nil {
+		fmt.Println("Error getting expense file path:", err)
+		return nil, err
+	}
+
+	data, err := readFileContents(filePath)
+	if err != nil {
+		fmt.Println("Error reading the file:", err)
+		return nil, err
+	}
+
+	expenseList, err := unmarshalExpenses(data)
+	if err != nil {
+		fmt.Println("Error unmarshalling the file content:", err)
+		return nil, err
+	}
+
+	return expenseList, nil
 }
 
 func SaveExpenses(expenses expenses.Expenses) error {
 	filePath, err := _getExpenseFilePath()
 	if err != nil {
+		fmt.Println("Error getting expense file path:", err)
 		return err
 	}
-	return _saveExpensesToFile(filePath, expenses)
+
+	data, err := marshalExpenses(expenses)
+	if err != nil {
+		fmt.Println("Error marshalling expenses:", err)
+		return err
+	}
+
+	if err := writeToFile(filePath, data); err != nil {
+		fmt.Println("Error writing to the file:", err)
+		return err
+	}
+
+	return nil
 }
 
-func LoadExpenses() (expenses.Expenses, error) {
-	filePath, err := _getExpenseFilePath()
+func readFileContents(filePath string) ([]byte, error) {
+	data, err := os.ReadFile(filePath)
 	if os.IsNotExist(err) {
-		return expenses.Expenses{}, nil
+		return nil, nil
 	} else if err != nil {
 		return nil, err
 	}
-	return _loadExpenseFromFile(filePath)
+	return data, nil
 }
 
-func _saveExpensesToFile(filename string, expenses expenses.Expenses) error {
-	data, err := json.Marshal(expenses)
-	if err != nil {
-		return err
-	}
-	return os.WriteFile(filename, data, 0644)
+func writeToFile(filePath string, data []byte) error {
+	return os.WriteFile(filePath, data, 0644)
 }
 
-func _loadExpenseFromFile(filename string) (expenses.Expenses, error) {
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
+func marshalExpenses(expenses expenses.Expenses) ([]byte, error) {
+	return json.Marshal(expenses)
+}
 
+func unmarshalExpenses(data []byte) (expenses.Expenses, error) {
 	var expenseList expenses.Expenses
 	if err := json.Unmarshal(data, &expenseList); err != nil {
 		return nil, err

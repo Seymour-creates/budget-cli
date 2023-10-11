@@ -20,21 +20,24 @@ func main() {
 	switch strings.TrimSpace(choice) {
 	case "1":
 		exp := cli.PromptForExpenses()
-		fmt.Println(exp)
+		fmt.Println("Expenses to be added:", exp)
 		monthlyExpenses := expenses.Expenses{}
 		monthlyExpenses.AddExpense(exp...)
 		if err := storage.UpdateExpenses(monthlyExpenses...); err != nil {
+			fmt.Println("Error updating expenses:", err)
 			return
 		}
-		fmt.Println("monthly expenses", monthlyExpenses)
-	case "2": //
+		fmt.Println("Updated monthly expenses:", monthlyExpenses)
+	case "2":
+		//...
 	case "3":
 		loadedExpenses, err := storage.LoadExpenses()
 		if err != nil {
-			fmt.Println("Error loading expenses: ", err)
+			fmt.Println("Error loading expenses:", err)
+			return
 		}
 		total := loadedExpenses.TotalExpense(time.Time{}, time.Time{})
-		fmt.Println("Total of all expenses: ", total)
+		fmt.Println("Total of all expenses:", total)
 	default:
 		return
 	}

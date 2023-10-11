@@ -1,0 +1,5 @@
+# Ensure Go code always uses LF
+*.go text eol=lf
+
+# General text files default behavior
+* text=auto
