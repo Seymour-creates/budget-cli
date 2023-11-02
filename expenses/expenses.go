@@ -1,6 +1,7 @@
 package expenses
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -10,6 +11,15 @@ type Expense struct {
 	Amount      float64
 	Category    string
 }
+
+type Forecast struct {
+	Date        time.Time
+	Description string
+	Amount      float64
+	Category    string
+}
+
+type MonthlyForecast []Forecast
 
 type Expenses []Expense
 
@@ -64,6 +74,35 @@ func (e *Expenses) TotalExpense(fromDate, toDate time.Time) float64 {
 			total += expense.Amount
 		}
 	}
+
+	return total
+}
+
+func (e *Expenses) DisplayExpensesAndTotal(fromDate, toDate time.Time) float64 {
+	var total float64
+	var expensesToShow Expenses
+
+	if fromDate.IsZero() && toDate.IsZero() {
+		now := time.Now()
+		fromDate = time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.UTC)
+		toDate = time.Date(now.Year(), now.Month()+1, 0, 0, 0, 0, 0, time.UTC)
+	}
+
+	fmt.Printf("%-15s %-30s %-10s %-15s\n", "Date", "Description", "Amount", "Category")
+	fmt.Println("---------------------------------------------------------------------------")
+	for _, expense := range *e {
+		if (expense.Date.After(fromDate) || expense.Date.Equal(fromDate)) &&
+			(expense.Date.Before(toDate) || expense.Date.Equal(toDate)) {
+			total += expense.Amount
+			expensesToShow = append(expensesToShow, expense)
+			fmt.Printf("%-15s %-30s %-10.2f %-15s\n",
+				expense.FormattedDate(), expense.Description, expense.Amount, expense.Category)
+		}
+	}
+
+	fmt.Println("---------------------------------------------------------------------------")
+	fmt.Printf("%-45s %-10.2f\n", "Total", total)
+	fmt.Println()
 
 	return total
 }

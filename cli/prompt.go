@@ -30,7 +30,6 @@ func PromptForExpenses() expenses.Expenses {
 			break
 		}
 		// Convert amount string to float64
-		fmt.Println("you entered this amount: ", amountStr)
 		amount, err := strconv.ParseFloat(amountStr, 64)
 		if err != nil {
 			fmt.Println("Invalid Amount. Please Enter a valid number.")
@@ -57,4 +56,9 @@ func PromptForExpenses() expenses.Expenses {
 	}
 
 	return collectedExpenses
+}
+
+// PromptForecastReport prompts user for expenditure estimates for the current month
+func PromptForecastReport() {
+
 }

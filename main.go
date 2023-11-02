@@ -36,7 +36,7 @@ func main() {
 			fmt.Println("Error loading expenses:", err)
 			return
 		}
-		total := loadedExpenses.TotalExpense(time.Time{}, time.Time{})
+		total := loadedExpenses.DisplayExpensesAndTotal(time.Time{}, time.Time{})
 		fmt.Println("Total of all expenses:", total)
 	default:
 		return

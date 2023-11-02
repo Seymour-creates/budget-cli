@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/Seymour-creates/budget-cli/expenses"
@@ -30,6 +31,10 @@ func LoadExpenses() (expenses.Expenses, error) {
 	if err != nil {
 		fmt.Println("Error reading the file:", err)
 		return nil, err
+	}
+
+	if bytes.Equal(data, []byte{}) {
+		return expenses.Expenses{}, nil
 	}
 
 	expenseList, err := unmarshalExpenses(data)
