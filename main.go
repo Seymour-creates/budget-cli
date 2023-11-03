@@ -29,9 +29,15 @@ func main() {
 		}
 		fmt.Println("Updated monthly expenses:", monthlyExpenses)
 	case "2":
-		//...
+		forecast := cli.PromptForecastReport()
+		fmt.Println("forecast: ", forecast)
+		if err := storage.UpdateForecast(forecast...); err != nil {
+			fmt.Println("Error updating forecast:", err)
+			return
+		}
+		fmt.Println("Completed Forecast:", forecast)
 	case "3":
-		loadedExpenses, err := storage.LoadExpenses()
+		loadedExpenses, err := storage.LoadExpensesFromJSON()
 		if err != nil {
 			fmt.Println("Error loading expenses:", err)
 			return

@@ -43,7 +43,7 @@ func PromptForExpenses() expenses.Expenses {
 			continue
 		}
 		description := promptUser("Enter the description of the expense: ")
-		category := promptUser("Enter the category of the expense (Bill, Grocery, Entertainment): ")
+		category := promptUser("Enter the category of the expense (Bill, Debt, Entertainment, Groceries, Misc, Savings, Takeout): ")
 
 		newExpense := expenses.Expense{
 			Date:        date,
@@ -59,6 +59,31 @@ func PromptForExpenses() expenses.Expenses {
 }
 
 // PromptForecastReport prompts user for expenditure estimates for the current month
-func PromptForecastReport() {
+func PromptForecastReport() expenses.MonthlyForecast {
+	financialForecast := expenses.MonthlyForecast{}
+	for {
+		fmt.Println("Enter forecasted expenses for the upcoming month... \ntype 'exit' to finish:")
 
+		amountStr := promptUser("Enter the forecasted amount (or 'exit' to stop): ")
+		if amountStr == "exit" {
+			break
+		}
+
+		// Convert amount string to float64
+		amount, err := strconv.ParseFloat(amountStr, 64)
+		if err != nil {
+			fmt.Println("Invalid Amount. Please Enter a valid number.")
+			continue
+		}
+
+		category := promptUser("Enter the category of the forecasted expense (Bill, Debt, Entertainment, Groceries, Misc, Savings, Takeout): ")
+
+		categoryForecast := expenses.Forecast{
+			Amount:   amount,
+			Category: category,
+		}
+
+		financialForecast = append(financialForecast, categoryForecast)
+	}
+	return financialForecast
 }

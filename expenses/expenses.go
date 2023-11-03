@@ -13,10 +13,8 @@ type Expense struct {
 }
 
 type Forecast struct {
-	Date        time.Time
-	Description string
-	Amount      float64
-	Category    string
+	Amount   float64
+	Category string
 }
 
 type MonthlyForecast []Forecast
@@ -106,46 +104,3 @@ func (e *Expenses) DisplayExpensesAndTotal(fromDate, toDate time.Time) float64 {
 
 	return total
 }
-
-//
-//
-//package expenses
-//
-//import (
-//    "time"
-//    // other necessary imports
-//)
-//
-//// Expense represents a single expense entry
-//type Expense struct {
-//    Date        time.Time
-//    Description string
-//    Amount      float64
-//    Category    string
-//}
-//
-//// List of Expenses
-//type Expenses []Expense
-//
-//// AddExpense appends a new expense to the list
-//func (e *Expenses) AddExpense(expense Expense) {
-//    *e = append(*e, expense)
-//    // Optionally: Save to storage immediately after adding
-//}
-//
-//// DeleteExpense removes an expense based on some criteria, e.g., a unique ID or date
-//func (e *Expenses) DeleteExpense(/* criteria */) {
-//// Logic to delete an expense
-//}
-//
-//// UpdateExpense modifies an existing expense
-//func (e *Expenses) UpdateExpense(expense Expense) {
-//	// Logic to update an expense
-//}
-//
-//// TotalExpense calculates the total expense for a given period
-//func (e *Expenses) TotalExpense(fromDate, toDate time.Time) float64 {
-//	// Logic to sum expenses in the given date range
-//}
-//
-//// Other utility functions related to expenses
