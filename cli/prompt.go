@@ -60,7 +60,8 @@ func PromptForExpenses() expenses.Expenses {
 
 // PromptForecastReport prompts user for expenditure estimates for the current month
 func PromptForecastReport() expenses.MonthlyForecast {
-	financialForecast := expenses.MonthlyForecast{}
+	var financialForecast expenses.MonthlyForecast
+
 	for {
 		fmt.Println("Enter forecasted expenses for the upcoming month... \ntype 'exit' to finish:")
 
@@ -78,12 +79,13 @@ func PromptForecastReport() expenses.MonthlyForecast {
 
 		category := promptUser("Enter the category of the forecasted expense (Bill, Debt, Entertainment, Groceries, Misc, Savings, Takeout): ")
 
-		categoryForecast := expenses.Forecast{
+		forecast := expenses.Forecast{
 			Amount:   amount,
 			Category: category,
 		}
 
-		financialForecast = append(financialForecast, categoryForecast)
+		financialForecast = append(financialForecast, forecast)
 	}
+
 	return financialForecast
 }

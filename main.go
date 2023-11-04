@@ -11,10 +11,18 @@ import (
 	"time"
 )
 
+// TODO: Expand to cobra for cli args..
+//
+//	export saving data to db
+//	expose cli via rest api
 func main() {
 
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Please make a decision of what you would like to do:\n1: Add expense\n2: Forecast Monthly Expenses\n3: Generate Spending Summary\n")
+	fmt.Print("Please make a decision of what you would like to do:" +
+		"\n\t1: Add expense" +
+		"\n\t2: Forecast Monthly Expenses" +
+		"\n\t3: Generate Spending Summary" +
+		"\n\t4: Compare current expenses to monthly forecast\n\t➡️")
 
 	choice, _ := reader.ReadString('\n')
 	switch strings.TrimSpace(choice) {
@@ -44,6 +52,19 @@ func main() {
 		}
 		total := loadedExpenses.DisplayExpensesAndTotal(time.Time{}, time.Time{})
 		fmt.Println("Total of all expenses:", total)
+	case "4":
+		moneySpent, err := storage.LoadExpensesFromJSON()
+		if err != nil {
+			fmt.Println("Error loading expenses for comparison.")
+			return
+		}
+		cashFlow, err := storage.LoadForecastFromJSON()
+		if err != nil {
+			fmt.Println("Error loading forecast data for comparison.")
+			return
+		}
+		forecasted, expenditure := expenses.CompareForecastToExpenses(cashFlow, moneySpent)
+		expenses.PrintBarChart(forecasted, expenditure)
 	default:
 		return
 	}
