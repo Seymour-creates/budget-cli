@@ -22,59 +22,9 @@ type MonthlyForecast []Forecast
 
 type Expenses []Expense
 
-// AddExpense adds new expense to current month expenses
-func (e *Expenses) AddExpense(expensesToAdd ...Expense) {
-	for _, expense := range expensesToAdd {
-		*e = append(*e, expense)
-	}
-}
-
 // FormattedDate returns a YYYY-MM-DD format of expense date
 func (e Expense) FormattedDate() string {
 	return e.Date.Format("2006-01-02")
-}
-
-// TotalExpense calculates the total expense for a given period
-func (e *Expenses) TotalExpense(fromDate, toDate time.Time) float64 {
-	var total float64
-
-	// If no dates are provided, sum all expenses
-	if fromDate.IsZero() && toDate.IsZero() {
-		for _, expense := range *e {
-			total += expense.Amount
-		}
-		return total
-	}
-
-	// If only fromDate is provided, sum expenses from that date onwards
-	if !fromDate.IsZero() && toDate.IsZero() {
-		for _, expense := range *e {
-			if expense.Date.After(fromDate) || expense.Date.Equal(fromDate) {
-				total += expense.Amount
-			}
-		}
-		return total
-	}
-
-	// If only toDate is provided, sum expenses until that date
-	if fromDate.IsZero() && !toDate.IsZero() {
-		for _, expense := range *e {
-			if expense.Date.Before(toDate) || expense.Date.Equal(toDate) {
-				total += expense.Amount
-			}
-		}
-		return total
-	}
-
-	// If both dates are provided, sum expenses in that range
-	for _, expense := range *e {
-		if (expense.Date.After(fromDate) || expense.Date.Equal(fromDate)) &&
-			(expense.Date.Before(toDate) || expense.Date.Equal(toDate)) {
-			total += expense.Amount
-		}
-	}
-
-	return total
 }
 
 func (e *Expenses) DisplayExpensesAndTotal(fromDate, toDate time.Time) float64 {

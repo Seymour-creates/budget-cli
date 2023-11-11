@@ -1,85 +1,61 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"github.com/Seymour-creates/budget-cli/cli"
-	"github.com/Seymour-creates/budget-cli/expenses"
-	"github.com/Seymour-creates/budget-cli/storage"
+	"github.com/spf13/cobra"
 	"os"
-	"strings"
-	"time"
 )
 
-// TODO: Expand to cobra for cli args..
-//
-//	export saving data to db
-//	expose cli via rest api
 func main() {
+	var rootCmd = &cobra.Command{Use: "budget-prompter"}
 
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Please make a decision of what you would like to do:" +
-		"\n\t1: Add expense" +
-		"\n\t2: Forecast Monthly Expenses" +
-		"\n\t3: Generate Spending Summary" +
-		"\n\t4: Compare current expenses to monthly forecast\n\t➡️")
+	// Add expense command
+	var cmdAddExpense = &cobra.Command{
+		Use:   "add-expense",
+		Short: "Add a new expense",
+		Run:   addExpenseCmd,
+	}
 
-	choice, _ := reader.ReadString('\n')
-	switch strings.TrimSpace(choice) {
-	case "1":
-		exp := cli.PromptForExpenses()
-		fmt.Println("Expenses to be added:", exp)
-		monthlyExpenses := expenses.Expenses{}
-		monthlyExpenses.AddExpense(exp...)
-		if err := storage.UpdateExpenses(monthlyExpenses...); err != nil {
-			fmt.Println("Error updating expenses:", err)
-			return
-		}
-		fmt.Println("Updated monthly expenses:", monthlyExpenses)
-	case "2":
-		forecast := cli.PromptForecastReport()
-		fmt.Println("forecast: ", forecast)
-		if err := storage.UpdateForecast(forecast...); err != nil {
-			fmt.Println("Error updating forecast:", err)
-			return
-		}
-		fmt.Println("Completed Forecast:", forecast)
-	case "3":
-		loadedExpenses, err := storage.LoadExpensesFromJSON()
-		if err != nil {
-			fmt.Println("Error loading expenses:", err)
-			return
-		}
-		total := loadedExpenses.DisplayExpensesAndTotal(time.Time{}, time.Time{})
-		fmt.Println("Total of all expenses:", total)
-	case "4":
-		moneySpent, err := storage.LoadExpensesFromJSON()
-		if err != nil {
-			fmt.Println("Error loading expenses for comparison.")
-			return
-		}
-		cashFlow, err := storage.LoadForecastFromJSON()
-		if err != nil {
-			fmt.Println("Error loading forecast data for comparison.")
-			return
-		}
-		forecasted, expenditure := expenses.CompareForecastToExpenses(cashFlow, moneySpent)
-		expenses.PrintBarChart(forecasted, expenditure)
-	default:
-		return
+	// Forecast monthly expenses command
+	var cmdForecast = &cobra.Command{
+		Use:   "forecast",
+		Short: "Forecast monthly expenses",
+		Run:   monthlyForecastCmd,
+	}
+
+	// Generate spending summary command
+	var cmdSummary = &cobra.Command{
+		Use:   "summary",
+		Short: "Generate a spending summary",
+		Run:   summaryCmd,
+	}
+
+	// Compare expenses to forecast command
+	var cmdCompare = &cobra.Command{
+		Use:   "compare",
+		Short: "Compare current expenses to monthly forecast",
+		Run:   compareMonthToForecastCmd,
+	}
+
+	// Adding the commands to the root command
+	rootCmd.AddCommand(cmdAddExpense, cmdForecast, cmdSummary, cmdCompare)
+
+	// Execute the root command
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
 
 /*
-/budget-cli
+/budget-prompter
 |--/expenses
-|  |-- expenses.go
-|  |-- expenses_test.go
-|--/forecast
+|--/prompter
 |--/storage
 |--/report
 |--/utils
 |-- main.go
+|-- cli.commands.go
 |-- go.mod
 |-- go. Sum
 */
