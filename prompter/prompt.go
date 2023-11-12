@@ -3,7 +3,7 @@ package prompter
 import (
 	"bufio"
 	"fmt"
-	"github.com/Seymour-creates/budget-cli/expenses"
+	"github.com/Seymour-creates/budget-cli/types"
 	"os"
 	"strconv"
 	"strings"
@@ -19,8 +19,8 @@ func promptUser(message string) string {
 }
 
 // PromptForExpenses prompts user for new expense data and returns new expense
-func PromptForExpenses() expenses.Expenses {
-	var collectedExpenses expenses.Expenses
+func PromptForExpenses() types.Expenses {
+	var collectedExpenses types.Expenses
 
 	for {
 		fmt.Println("Enter expense details or type 'exit' to finish:")
@@ -45,7 +45,7 @@ func PromptForExpenses() expenses.Expenses {
 		description := promptUser("Enter the description of the expense: ")
 		category := promptUser("Enter the category of the expense (Bill, Debt, Entertainment, Groceries, Misc, Savings, Takeout): ")
 
-		newExpense := expenses.Expense{
+		newExpense := types.Expense{
 			Date:        date,
 			Description: description,
 			Amount:      amount,
@@ -59,8 +59,8 @@ func PromptForExpenses() expenses.Expenses {
 }
 
 // PromptForecastReport prompts user for expenditure estimates for the current month
-func PromptForecastReport() expenses.MonthlyForecast {
-	var financialForecast expenses.MonthlyForecast
+func PromptForecastReport() types.MonthlyForecast {
+	var financialForecast types.MonthlyForecast
 
 	for {
 		fmt.Println("Enter forecasted expenses for the upcoming month... \ntype 'exit' to finish:")
@@ -79,7 +79,7 @@ func PromptForecastReport() expenses.MonthlyForecast {
 
 		category := promptUser("Enter the category of the forecasted expense (Bill, Debt, Entertainment, Groceries, Misc, Savings, Takeout): ")
 
-		forecast := expenses.Forecast{
+		forecast := types.Forecast{
 			Amount:   amount,
 			Category: category,
 		}

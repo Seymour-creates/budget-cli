@@ -19,7 +19,7 @@ func main() {
 	// Forecast monthly expenses command
 	var cmdForecast = &cobra.Command{
 		Use:   "forecast",
-		Short: "Forecast monthly expenses",
+		Short: "Forecast monthly types",
 		Run:   monthlyForecastCmd,
 	}
 
@@ -33,8 +33,8 @@ func main() {
 	// Compare expenses to forecast command
 	var cmdCompare = &cobra.Command{
 		Use:   "compare",
-		Short: "Compare current expenses to monthly forecast",
-		Run:   compareMonthToForecastCmd,
+		Short: "Compare current types to monthly forecast",
+		Run:   compareForecastToExpenseCmd,
 	}
 
 	// Adding the commands to the root command
@@ -49,9 +49,9 @@ func main() {
 
 /*
 /budget-prompter
-|--/expenses
+|--/types
 |--/prompter
-|--/storage
+|--/client
 |--/report
 |--/utils
 |-- main.go

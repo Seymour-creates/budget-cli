@@ -1,31 +1,10 @@
-package expenses
+package types
 
 import (
 	"fmt"
 	"strings"
 	"time"
 )
-
-type Expense struct {
-	Date        time.Time
-	Description string
-	Amount      float64
-	Category    string
-}
-
-type Forecast struct {
-	Amount   float64
-	Category string
-}
-
-type MonthlyForecast []Forecast
-
-type Expenses []Expense
-
-// FormattedDate returns a YYYY-MM-DD format of expense date
-func (e Expense) FormattedDate() string {
-	return e.Date.Format("2006-01-02")
-}
 
 func (e *Expenses) DisplayExpensesAndTotal(fromDate, toDate time.Time) float64 {
 	var total float64
@@ -61,15 +40,6 @@ func (e *Expenses) DisplayExpensesAndTotal(fromDate, toDate time.Time) float64 {
 	fmt.Println()
 
 	return total
-}
-
-func _centerString(s string, width int) string {
-	if len(s) >= width {
-		return s
-	}
-	leftPadding := (width - len(s)) / 2
-	rightPadding := width - len(s) - leftPadding
-	return fmt.Sprintf("%*s%s%*s", leftPadding, "", s, rightPadding, "")
 }
 
 func CompareForecastToExpenses(forecast MonthlyForecast, expenses Expenses) (map[string]float64, map[string]float64) {
@@ -154,4 +124,13 @@ func PrintBarChart(forecast map[string]float64, expenses map[string]float64) {
 		bar := strings.Repeat("=", barLength) + strings.Repeat(" ", maxBarLength-barLength)
 		fmt.Printf("%-10s [%s] %.2f%%\n", category, bar, percentageSpent)
 	}
+}
+
+func _centerString(s string, width int) string {
+	if len(s) >= width {
+		return s
+	}
+	leftPadding := (width - len(s)) / 2
+	rightPadding := width - len(s) - leftPadding
+	return fmt.Sprintf("%*s%s%*s", leftPadding, "", s, rightPadding, "")
 }
