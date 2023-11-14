@@ -49,7 +49,7 @@ func PostExpense(expenses types.Expenses) error {
 	}
 	success, err := makeHTTPReq(ctx, http.MethodPost, "http://localhost:3000/post_expense", headers, expensesToPost)
 	if err != nil {
-		fmt.Errorf("error making http request: %v", err)
+		return fmt.Errorf("error making http request: %v", err)
 	}
 	fmt.Println("Response: ", string(success))
 	return nil
@@ -67,15 +67,13 @@ func PostForecast(forecast types.MonthlyForecast) error {
 	}
 	success, err := makeHTTPReq(ctx, http.MethodPost, "http://localhost:3000/post_forecast", headers, forecastToPost)
 	if err != nil {
-		fmt.Errorf("error making http request: %v", err)
+		return fmt.Errorf("error making http request: %v", err)
 	}
-	fmt.Println("Response: ", success)
+	fmt.Println("Response: ", string(success))
 	return nil
 }
 
 func GetCompareForecastToExpense() (expenses types.Expenses, forecast types.MonthlyForecast, err error) {
-	var _expense types.Expense
-	var _forecast types.Forecast
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -86,8 +84,11 @@ func GetCompareForecastToExpense() (expenses types.Expenses, forecast types.Mont
 	if err != nil {
 		return nil, nil, fmt.Errorf("error making http request: %v", err)
 	}
-	fmt.Println("Response data: ", resp)
-	return types.Expenses{_expense}, types.MonthlyForecast{_forecast}, nil
+	var response types.MonthlyBudgetInsights
+	if err = json.Unmarshal(resp, &response); err != nil {
+		return nil, nil, fmt.Errorf("error converting response: %v", err)
+	}
+	return response.Expenses, response.Forecast, nil
 }
 
 func GetMonthlySummary() (types.Expenses, error) {
@@ -106,10 +107,8 @@ func GetMonthlySummary() (types.Expenses, error) {
 	}
 
 	if err := json.Unmarshal(data, &expenses); err != nil {
-		return nil, fmt.Errorf("error parsing response data %v.\nError: %v", data, err)
+		return nil, fmt.Errorf("error parsing response data %v.\nError: %v", string(data), err)
 	}
-
-	fmt.Println("Response data: ", data, "Expenses: ", expenses)
 
 	return expenses, err
 }

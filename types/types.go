@@ -16,3 +16,15 @@ type Expenses []Expense
 func (e Expense) FormattedDate() string {
 	return e.Date.Format("2006-01-02")
 }
+
+type Forecast struct {
+	Amount   float64
+	Category string
+}
+
+type MonthlyForecast []Forecast
+
+type MonthlyBudgetInsights struct {
+	Expenses []Expense  `json:"expenses"`
+	Forecast []Forecast `json:"forecast"`
+}

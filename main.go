@@ -55,7 +55,7 @@ func main() {
 |--/report
 |--/utils
 |-- main.go
-|-- cli.commands.go
+|-- commands.go
 |-- go.mod
 |-- go. Sum
 */
