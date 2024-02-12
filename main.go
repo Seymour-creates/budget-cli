@@ -2,43 +2,35 @@ package main
 
 import (
 	"fmt"
+	"github.com/Seymour-creates/budget-cli/commands"
+	"github.com/Seymour-creates/budget-cli/finService"
+	"github.com/Seymour-creates/budget-cli/interaction"
+	"github.com/Seymour-creates/budget-cli/presentation"
+	"github.com/Seymour-creates/budget-cli/xatClient"
+	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
+	"log"
 	"os"
 )
 
 func main() {
-	var rootCmd = &cobra.Command{Use: "budget-prompter"}
-
-	// Add expense command
-	var cmdAddExpense = &cobra.Command{
-		Use:   "add-expense",
-		Short: "Add a new expense",
-		Run:   addExpenseCmd,
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
-
-	// Forecast monthly expenses command
-	var cmdForecast = &cobra.Command{
-		Use:   "forecast",
-		Short: "Forecast monthly types",
-		Run:   monthlyForecastCmd,
-	}
-
-	// Generate spending summary command
-	var cmdSummary = &cobra.Command{
-		Use:   "summary",
-		Short: "Generate a spending summary",
-		Run:   summaryCmd,
-	}
-
-	// Compare expenses to forecast command
-	var cmdCompare = &cobra.Command{
-		Use:   "compare",
-		Short: "Compare current types to monthly forecast",
-		Run:   compareForecastToExpenseCmd,
-	}
-
+	rootCmd := &cobra.Command{Use: "budget-prompter"}
+	prompter := interaction.NewPrompter()
+	service := finService.NewFinanceService()
+	presenter := presentation.NewFinanceDisplay()
+	client := xatClient.NewClient()
+	command := commands.NewCommand(prompter, presenter, service, client)
 	// Adding the commands to the root command
-	rootCmd.AddCommand(cmdAddExpense, cmdForecast, cmdSummary, cmdCompare)
+	rootCmd.AddCommand(
+		command.AddExpenseCmd(),
+		command.MonthlyForecastCmd(),
+		command.SummaryCmd(),
+		command.CompareForecastToExpenseCmd(),
+	)
 
 	// Execute the root command
 	if err := rootCmd.Execute(); err != nil {
@@ -46,16 +38,3 @@ func main() {
 		os.Exit(1)
 	}
 }
-
-/*
-/budget-prompter
-|--/types
-|--/prompter
-|--/client
-|--/report
-|--/utils
-|-- main.go
-|-- commands.go
-|-- go.mod
-|-- go. Sum
-*/
