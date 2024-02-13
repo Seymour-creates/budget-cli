@@ -18,7 +18,7 @@ type Command struct {
 	client   *xatClient.Client
 }
 
-func NewCommand(p *interaction.Prompt, present *presentation.FinanceDisplay, service *finService.FinanceService, client *xatClient.Client) *Command {
+func NewCommander(p *interaction.Prompt, present *presentation.FinanceDisplay, service *finService.FinanceService, client *xatClient.Client) *Command {
 	return &Command{
 		prompter: p,
 		present:  present,
@@ -68,7 +68,11 @@ func (c *Command) SummaryCmd() *cobra.Command {
 				fmt.Println("Error getting expense data: ", err)
 			}
 
-			total := c.present.Expenses(loadedExpenses, time.Time{}, time.Time{})
+			t := time.Now()
+			startOfMonth := time.Date(t.Year(), t.Month(), 1, 0, 0, 0, 0, t.Location())
+			endOfMonth := startOfMonth.AddDate(0, 1, 0).Add(-time.Nanosecond)
+
+			total := c.present.Expenses(loadedExpenses, startOfMonth, endOfMonth)
 			fmt.Println("Total of all expenses:", total)
 		},
 	}
@@ -87,5 +91,13 @@ func (c *Command) CompareForecastToExpenseCmd() *cobra.Command {
 			forecasted, expenditure := c.service.ExtractForecastAndExpense(cashOut, forecast)
 			c.present.BarChart(forecasted, expenditure)
 		},
+	}
+}
+
+func (c *Command) PlaidLinkCmd() *cobra.Command {
+	//ctx := context.Background()
+	return &cobra.Command{
+		Use:   "plaid-link",
+		Short: "Sends user to xat htmx page for plaid link integration",
 	}
 }

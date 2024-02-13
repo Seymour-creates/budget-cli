@@ -19,11 +19,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	rootCmd := &cobra.Command{Use: "budget-prompter"}
-	prompter := interaction.NewPrompter()
-	service := finService.NewFinanceService()
-	presenter := presentation.NewFinanceDisplay()
-	client := xatClient.NewClient()
-	command := commands.NewCommand(prompter, presenter, service, client)
+	command := generateCommandController()
 	// Adding the commands to the root command
 	rootCmd.AddCommand(
 		command.AddExpenseCmd(),
@@ -37,4 +33,13 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func generateCommandController() *commands.Command {
+	prompter := interaction.NewPrompter()
+	service := finService.NewFinanceService()
+	presenter := presentation.NewFinanceDisplay()
+	client := xatClient.NewClient()
+	command := commands.NewCommander(prompter, presenter, service, client)
+	return command
 }

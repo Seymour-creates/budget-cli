@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/Seymour-creates/budget-cli/finance"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -92,10 +93,26 @@ func (c *Client) GetForecastAndExpense(ctx context.Context) (expenses finance.Ex
 func (c *Client) GetMonthExpenses(ctx context.Context) (finance.Expenses, error) {
 	var expenses finance.Expenses
 
-	data, err := c.makeHTTPReq(ctx, http.MethodGet, "/get_expenses", nil)
+	requestRange := struct {
+		FromDate string `json:"fromDate"`
+		ToDate   string `json:"toDate"`
+	}{
+		FromDate: "2024-01-01",
+		ToDate:   "2024-02-28",
+	}
+
+	requestBody, err := json.Marshal(requestRange)
+	if err != nil {
+		return nil, fmt.Errorf("error marshalling request body: %v", err)
+	}
+
+	data, err := c.makeHTTPReq(ctx, http.MethodGet, "/get_expenses", requestBody)
 	if err != nil {
 		return nil, fmt.Errorf("error making http request: %v", err)
 	}
+
+	// Log the HTTP response
+	log.Printf("HTTP response: %s", data)
 
 	if err := json.Unmarshal(data, &expenses); err != nil {
 		return nil, fmt.Errorf("error parsing response data %v.\nError: %v", string(data), err)
