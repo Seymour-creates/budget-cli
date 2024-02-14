@@ -30,7 +30,7 @@ func NewCommander(p *interaction.Prompt, present *presentation.FinanceDisplay, s
 func (c *Command) AddExpenseCmd() *cobra.Command {
 	ctx := context.Background()
 	return &cobra.Command{
-		Use:   "addExpense",
+		Use:   "add-expense",
 		Short: "Add expense",
 		Run: func(cmd *cobra.Command, args []string) {
 			exp := c.prompter.CollectExpenses()
@@ -42,10 +42,10 @@ func (c *Command) AddExpenseCmd() *cobra.Command {
 	}
 }
 
-func (c *Command) MonthlyForecastCmd() *cobra.Command {
+func (c *Command) AddForecastCmd() *cobra.Command {
 	ctx := context.Background()
 	return &cobra.Command{
-		Use:   "monthlyForecast",
+		Use:   "add-forecast",
 		Short: "Monthly forecast",
 		Run: func(cmd *cobra.Command, args []string) {
 			forecast := c.prompter.CollectForecast()
@@ -57,11 +57,11 @@ func (c *Command) MonthlyForecastCmd() *cobra.Command {
 	}
 }
 
-func (c *Command) SummaryCmd() *cobra.Command {
+func (c *Command) ExpenseDetailsCmd() *cobra.Command {
 	ctx := context.Background()
 	return &cobra.Command{
-		Use:   "summary",
-		Short: "Generate a spending summary",
+		Use:   "detail-expenses",
+		Short: "Generate a detailed expenses summary",
 		Run: func(cmd *cobra.Command, args []string) {
 			loadedExpenses, err := c.client.GetMonthExpenses(ctx)
 			if err != nil {
@@ -78,17 +78,17 @@ func (c *Command) SummaryCmd() *cobra.Command {
 	}
 }
 
-func (c *Command) CompareForecastToExpenseCmd() *cobra.Command {
+func (c *Command) ExpenseReportCmd() *cobra.Command {
 	ctx := context.Background()
 	return &cobra.Command{
-		Use:   "compare",
+		Use:   "expense-report",
 		Short: "Compare current types to monthly forecast",
 		Run: func(cmd *cobra.Command, args []string) {
-			forecast, cashOut, err := c.client.GetForecastAndExpense(ctx)
+			expenses, forecast, err := c.client.GetForecastAndExpense(ctx)
 			if err != nil {
-				fmt.Println("Error getting forecast or expense data: ", err)
+				fmt.Println("Error getting expenses or expense data: ", err)
 			}
-			forecasted, expenditure := c.service.ExtractForecastAndExpense(cashOut, forecast)
+			forecasted, expenditure := c.service.ExtractForecastAndExpense(forecast, expenses)
 			c.present.BarChart(forecasted, expenditure)
 		},
 	}

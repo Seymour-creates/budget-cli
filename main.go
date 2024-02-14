@@ -18,14 +18,14 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	rootCmd := &cobra.Command{Use: "budget-prompter"}
+	rootCmd := &cobra.Command{Use: "budgetcli"}
 	command := generateCommandController()
 	// Adding the commands to the root command
 	rootCmd.AddCommand(
 		command.AddExpenseCmd(),
-		command.MonthlyForecastCmd(),
-		command.SummaryCmd(),
-		command.CompareForecastToExpenseCmd(),
+		command.AddForecastCmd(),
+		command.ExpenseDetailsCmd(),
+		command.ExpenseReportCmd(),
 	)
 
 	// Execute the root command

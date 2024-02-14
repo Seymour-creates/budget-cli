@@ -42,10 +42,18 @@ func (fd *FinanceDisplay) Expenses(expenses finance.Expenses, fromDate, toDate t
 
 // BarChart generates and displays a bar chart comparing forecasted and actual expenses.
 func (fd *FinanceDisplay) BarChart(forecast, expenses map[string]float64) {
+	if forecast == nil {
+		fmt.Println("No forecast data available to display.")
+		return
+	}
+
 	const maxBarLength = 50
 	for category, forecastAmount := range forecast {
 		expenseAmount := expenses[category] // Assumes 0 if not found
-		percentageSpent := 100 * expenseAmount / forecastAmount
+		percentageSpent := 0.0
+		if forecastAmount != 0 {
+			percentageSpent = 100 * expenseAmount / forecastAmount
+		}
 		barLength := int(percentageSpent / 100 * maxBarLength)
 		bar := strings.Repeat("=", barLength) + strings.Repeat(" ", maxBarLength-barLength)
 		fmt.Printf("%-10s [%s] %.2f%%\n", category, bar, percentageSpent)

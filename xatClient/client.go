@@ -79,7 +79,7 @@ func (c *Client) PostForecast(ctx context.Context, forecast finance.MonthlyForec
 }
 
 func (c *Client) GetForecastAndExpense(ctx context.Context) (expenses finance.Expenses, forecast finance.MonthlyForecast, err error) {
-	resp, err := c.makeHTTPReq(ctx, http.MethodGet, "/get_compare", nil)
+	resp, err := c.makeHTTPReq(ctx, http.MethodGet, "/get_expense_report", nil)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error making http request: %v", err)
 	}
@@ -92,13 +92,15 @@ func (c *Client) GetForecastAndExpense(ctx context.Context) (expenses finance.Ex
 
 func (c *Client) GetMonthExpenses(ctx context.Context) (finance.Expenses, error) {
 	var expenses finance.Expenses
-
+	now := time.Now()
+	firstDay := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	lastDay := firstDay.AddDate(0, 1, -1)
 	requestRange := struct {
 		FromDate string `json:"fromDate"`
 		ToDate   string `json:"toDate"`
 	}{
-		FromDate: "2024-01-01",
-		ToDate:   "2024-02-28",
+		FromDate: firstDay.Format("2006-01-02"),
+		ToDate:   lastDay.Format("2006-01-02"),
 	}
 
 	requestBody, err := json.Marshal(requestRange)

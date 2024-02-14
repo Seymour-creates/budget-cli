@@ -24,3 +24,15 @@ type MonthlyBudgetInsights struct {
 	Expenses []Expense  `json:"expenses"`
 	Forecast []Forecast `json:"forecast"`
 }
+
+type Categories struct{}
+
+func (c Categories) IsValid(category string) bool {
+	validCategories := []string{"bill", "debt", "ent", "grocery", "misc", "saving", "takeout"}
+	for _, v := range validCategories {
+		if v == category {
+			return true
+		}
+	}
+	return false
+}

@@ -11,12 +11,14 @@ import (
 )
 
 type Prompt struct {
-	reader *bufio.Reader
+	reader     *bufio.Reader
+	categories *finance.Categories
 }
 
 func NewPrompter() *Prompt {
 	return &Prompt{
-		reader: bufio.NewReader(os.Stdin),
+		reader:     bufio.NewReader(os.Stdin),
+		categories: new(finance.Categories),
 	}
 }
 
@@ -80,8 +82,14 @@ func (p *Prompt) CollectExpenses() finance.Expenses {
 		}
 
 		description, _ := p.promptUser("Enter the description of the expense: ")
-		category, _ := p.promptUser("Enter the category of the expense (Bill, Debt, Entertainment, Groceries, Misc, Savings, Takeout): ")
+		category, _ := p.promptUser("Enter the category of the expense (bill, debt, ent, grocery, misc, saving, takeout): ")
 
+		category = strings.ToLower(category)
+
+		if !p.categories.IsValid(category) {
+			fmt.Println("Invalid category. Please enter a valid category.")
+			continue
+		}
 		newExpense := finance.Expense{
 			Date:        date,
 			Description: description,
@@ -97,7 +105,6 @@ func (p *Prompt) CollectExpenses() finance.Expenses {
 
 func (p *Prompt) CollectForecast() finance.MonthlyForecast {
 	var financialForecast finance.MonthlyForecast
-
 	for {
 		fmt.Println("Enter forecasted expenses for the upcoming month... \ntype 'exit' to finish:")
 
@@ -110,7 +117,13 @@ func (p *Prompt) CollectForecast() finance.MonthlyForecast {
 			continue
 		}
 
-		category, _ := p.promptUser("Enter the category of the forecasted expense (Bill, Debt, Entertainment, Groceries, Misc, Savings, Takeout): ")
+		category, _ := p.promptUser("Enter the category of the forecasted expense (bill, debt, ent, grocery, misc, saving, takeout): ")
+		category = strings.ToLower(category)
+
+		if !p.categories.IsValid(category) {
+			fmt.Println("Invalid category. Please enter a valid category.")
+			continue
+		}
 
 		forecast := finance.Forecast{
 			Amount:   amount,
