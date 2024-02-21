@@ -122,3 +122,25 @@ func (c *Client) GetMonthExpenses(ctx context.Context) (finance.Expenses, error)
 
 	return expenses, err
 }
+
+func (c *Client) RefreshExpenseDataViaPlaid(ctx context.Context) error {
+	resp, err := c.makeHTTPReq(ctx, http.MethodGet, "/refresh_expenses_via_plaid", nil)
+	if err != nil {
+		return fmt.Errorf("error making http request to refresh expenses: %v", err)
+	}
+	var result map[string]interface{}
+	if err = json.Unmarshal(resp, &result); err != nil {
+		return fmt.Errorf("error decoding response: %v", err)
+	}
+	log.Printf("Response: %v", result)
+	return nil
+}
+
+func (c *Client) VerifyMonthForecast(ctx context.Context) error {
+	resp, err := c.makeHTTPReq(ctx, http.MethodGet, "/verify_month_forecast", nil)
+	if err != nil {
+		return fmt.Errorf("error making request to verify month forecast: %v", err)
+	}
+	log.Printf("response: %v", resp)
+	return nil
+}

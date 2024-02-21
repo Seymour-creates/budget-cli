@@ -82,7 +82,7 @@ func (c *Command) ExpenseReportCmd() *cobra.Command {
 	ctx := context.Background()
 	return &cobra.Command{
 		Use:   "expense-report",
-		Short: "Compare current types to monthly forecast",
+		Short: "Compare current expenses and purchases to monthly forecast",
 		Run: func(cmd *cobra.Command, args []string) {
 			expenses, forecast, err := c.client.GetForecastAndExpense(ctx)
 			if err != nil {
@@ -94,10 +94,16 @@ func (c *Command) ExpenseReportCmd() *cobra.Command {
 	}
 }
 
-func (c *Command) PlaidLinkCmd() *cobra.Command {
-	//ctx := context.Background()
+func (c *Command) RefreshExpenseDataFromPlaidCmd() *cobra.Command {
+	ctx := context.Background()
 	return &cobra.Command{
-		Use:   "plaid-link",
-		Short: "Sends user to xat htmx page for plaid link integration",
+		Use:   "update-expenses",
+		Short: "Fetches latest expenses for the month from plaid, and updates db with expenses",
+		Run: func(cmd *cobra.Command, args []string) {
+			err := c.client.RefreshExpenseDataViaPlaid(ctx)
+			if err != nil {
+				fmt.Println("error fetching expense data from plaid: ", err)
+			}
+		},
 	}
 }
